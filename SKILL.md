@@ -49,7 +49,7 @@ advice. Markets can lose money.
 | `GET https://coil.trade/api/crypto/gate`   | 0.001 | The cheapest check: is the BTC 200-day master gate open? LONG/CASH per sleeve + verdict. |
 | `GET https://coil.trade/api/tradfi-risk`   | 0.003 | TradFi risk-on/off for crypto agents: S&P + Nasdaq regime, sector breadth, ladder + the BTC/ETH gate. |
 | `GET https://coil.trade/api/board/brief`   | 0.02  | The morning brief: regime per book + top-5 picks + biggest movers + crypto gate, in one call. |
-| `GET https://coil.trade/api/board/asof?date=YYYY-MM-DD` | 0.02 | Point-in-time archived scores, verbatim from the append-only log — verifiable against the free `/api/board/proof`. |
+| `GET https://coil.trade/api/board/asof?date=YYYY-MM-DD` | 0.02 | Point-in-time archived scores, verbatim from the append-only log — immutable, never revised; verifiable against the free `/api/board/proof`. |
 | `GET https://coil.trade/api/board/agent`   | 0.25  | The full board: ~560 scored names, all four books, sector boards, both buy-list lanes. |
 
 Free, before any payment: `GET /api/perf` (the engine's record vs SPY/QQQ) and
