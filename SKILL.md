@@ -39,7 +39,7 @@ advice. Markets can lose money.
 | `GET https://coil.trade/api/board/regime`  | 0.005 | Regime verdict per book (risk-on / be-selective / stand-down) + the index→sector→name permission ladder. |
 | `GET https://coil.trade/api/board/crypto`  | 0.005 | BTC/ETH long-only trend signal: LONG or CASH per sleeve, 50-day gates + the BTC 200-day master gate (UTC daily closes). |
 | `GET https://coil.trade/api/board/indices` | 0.005 | The scored index row per book (SPY, QQQ, macro, BTC/ETH) — the cheapest top-down read. |
-| `GET https://coil.trade/api/board/name?sym=NVDA` | 0.005 | One stock's full read + its book's regime. Any of ~560 names. |
+| `GET https://coil.trade/api/board/name?sym=NVDA` | 0.005 | One stock's full read + its book's regime — or up to **10 names in one call** (`?sym=NVDA,AMD,MSFT`). Any of ~560 names. |
 | `GET https://coil.trade/api/board/movers`  | 0.005 | Top 10 gainers + 10 losers, fully scored. |
 | `GET https://coil.trade/api/board/sectors` | 0.01  | Every sector ETF scored + the regime's green sectors. |
 | `GET https://coil.trade/api/board/sector?name=Energy` | 0.01 | One sector's members, fully scored and ranked (`?etf=XLE` works too). |
@@ -52,7 +52,8 @@ advice. Markets can lose money.
 | `GET https://coil.trade/api/board/asof?date=YYYY-MM-DD` | 0.02 | Point-in-time archived scores, verbatim from the append-only log — immutable, never revised; verifiable against the free `/api/board/proof`. |
 | `GET https://coil.trade/api/board/agent`   | 0.25  | The full board: ~560 scored names, all four books, sector boards, both buy-list lanes. |
 
-Free and unlimited: `GET /api/board/state` returns a hash of the material state — poll it and
+Free and unlimited: `GET /api/board/state` returns per-book hashes (`books.spx`, `books.qqq`) plus optional
+`?syms=NVDA,AMD` per-name hashes — poll it and
 buy only when it changes (`If-None-Match` gives you a 304).
 
 Free, before any payment: `GET /api/perf` (the engine's record vs SPY/QQQ) and
