@@ -52,6 +52,9 @@ advice. Markets can lose money.
 | `GET https://coil.trade/api/board/asof?date=YYYY-MM-DD` | 0.02 | Point-in-time archived scores, verbatim from the append-only log — immutable, never revised; verifiable against the free `/api/board/proof`. |
 | `GET https://coil.trade/api/board/agent`   | 0.25  | The full board: ~560 scored names, all four books, sector boards, both buy-list lanes. |
 
+Free and unlimited: `GET /api/board/state` returns a hash of the material state — poll it and
+buy only when it changes (`If-None-Match` gives you a 304).
+
 Free, before any payment: `GET /api/perf` (the engine's record vs SPY/QQQ) and
 `GET /api/board/proof` (append-only sha256 commitments with a reproducible verification
 recipe) — check the publisher before trusting it. `POST /api/key` with an email returns an
