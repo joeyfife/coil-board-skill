@@ -14,10 +14,19 @@ jobs:
         # coil.trade is the single source of truth (it serves the sha256 that
         # /.well-known/agent-skills/index.json advertises). A repo copy that drifts
         # is how a skill starts telling people things that are no longer true.
+        # Retry over ~3 minutes before failing: the mirror is pushed in the same breath as the
+        # site deploy, and Cloudflare edge propagation takes minutes — the 2026-07-30 failure
+        # was the CI's curl hitting a POP still serving the pre-deploy file 6 seconds after
+        # push. Genuine drift stays red: it never resolves, so every retry fails and then the
+        # weekly cron keeps failing too.
         run: |
-          curl -sS https://coil.trade/skills/coil-board/SKILL.md -o /tmp/live.md
-          diff -u /tmp/live.md SKILL.md || {
-            echo "::error::SKILL.md has drifted from https://coil.trade/skills/coil-board/SKILL.md"
-            exit 1; }
+          for i in 1 2 3 4 5 6; do
+            curl -sS "https://coil.trade/skills/coil-board/SKILL.md?ci=$GITHUB_RUN_ID-$i" -o /tmp/live.md
+            diff -u /tmp/live.md SKILL.md && exit 0
+            echo "attempt $i: differs (possibly edge propagation) — retrying in 30s"
+            sleep 30
+          done
+          echo "::error::SKILL.md has drifted from https://coil.trade/skills/coil-board/SKILL.md"
+          exit 1
       - name: Helper script runs against the live free board
         run: python3 scripts/coil_board.py
