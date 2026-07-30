@@ -100,9 +100,11 @@ There is also an always-free delayed sample at
 ## How payment works (x402)
 
 1. `GET` the endpoint with no payment. It returns **HTTP 402** with a JSON body
-   whose `accepts[0]` describes the requirement: `amount` (atomic USDC, 6
-   decimals — `5000` = $0.005), `asset` (USDC `0x8335…2913`), `network`
-   (`eip155:8453`, Base), and `payTo`.
+   whose `accepts[0]` describes the requirement in BOTH x402 dialects: `amount`
+   and `maxAmountRequired` (same value — atomic USDC, 6 decimals, `5000` =
+   $0.005), `asset` (USDC `0x8335…2913`), `network` (`base`) plus
+   `networkCaip2` (`eip155:8453`), and `payTo`. The `PAYMENT-REQUIRED` response
+   header carries the canonical v2 (CAIP-2) form.
 2. Sign an EIP-3009 `TransferWithAuthorization` for that amount to `payTo` and
    resend the request with the `PAYMENT-SIGNATURE` header (base64 x402 v2 payload).
 3. On success you get **HTTP 200** with the JSON board and an on-chain receipt in
