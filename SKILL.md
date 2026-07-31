@@ -116,6 +116,53 @@ in the Coinbase CDP x402 Bazaar; discovery metadata is also at
 `https://coil.trade/.well-known/x402` and the OpenAPI spec at
 `https://coil.trade/openapi.json`.
 
+## The default loop (copy-paste; expected cost $1–3/month)
+
+Every retention-minded buyer converges on the same loop, so here it is as the documented
+default. It spends nothing while the board is materially unchanged, $0.005 when the regime
+moves, and $0.02 more only when the regime says names are enterable:
+
+```js
+// coil_loop.mjs — poll free, buy on change, escalate on permission.
+// npm i x402-fetch viem   (funded Base USDC wallet; each call auto-pays via x402)
+import { wrapFetchWithPayment, createSigner } from "x402-fetch";
+const signer = await createSigner("base", process.env.PRIVATE_KEY);
+const paid = wrapFetchWithPayment(fetch, signer, BigInt(50_000)); // hard cap $0.05/call
+
+let etag = null, last = null;
+async function tick() {
+  // 1. FREE change detection — regime, ladder, candidate set, hashed per book
+  const r = await fetch("https://coil.trade/api/board/state",
+                        { headers: etag ? { "If-None-Match": etag } : {} });
+  if (r.status === 304) return;                      // nothing moved — spend nothing
+  etag = r.headers.get("ETag");
+  const s = await r.json();
+  const h = JSON.stringify(s.books);
+  if (h === last) return;
+  last = h;
+
+  // 2. $0.005 — the regime verdict, only because something materially changed
+  const regime = await (await paid("https://coil.trade/api/board/regime")).json();
+  const spx = regime.books?.spx?.regime;             // { mode, verdict, ladder: { rung } … }
+
+  // 3. $0.02 — the ranked buy-list, only when the ladder says names are enterable
+  if (spx?.ladder?.rung === "NAMES") {
+    const buylist = await (await paid("https://coil.trade/api/board/buylist")).json();
+    // …your sizing and exit rules here. Coil publishes scores and states —
+    // never position sizes, stop prices, or target prices. That half is yours.
+  }
+}
+setInterval(tick, 15 * 60 * 1000);
+tick();
+```
+
+At a 15-minute poll with typical regime-change frequency this runs **$1–3/month** — the
+state-hash endpoint exists so you spend less, not more. Verify the scores are worth even
+that before wiring it: `/api/board/signal-audit` marks every committed score to market
+(forward returns vs a sector-matched control, published even when negative), and
+`/api/board/asof?sample=1` serves one complete committed day free — diff it against your
+own scanner, and if your replica matches, don't pay us.
+
 ## Reading the payload
 
 Each scored name carries (field names as returned):
