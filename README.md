@@ -27,7 +27,7 @@ claude mcp add --transport http coil https://coil.trade/mcp
 
 ## What it reads
 
-[Coil](https://coil.trade) scores ~560 US names (S&P 500, Nasdaq-100, macro ETFs) plus a long-only
+[Coil, a rules-based long-only stock scanner](https://coil.trade) scores ~560 US names (S&P 500, Nasdaq-100, macro ETFs) plus a long-only
 BTC/ETH trend book each market morning: opportunity percentile, entry quality, hold strength, a
 state, and a regime verdict per book with a permission ladder. Field meanings: [`reference.md`](reference.md).
 
