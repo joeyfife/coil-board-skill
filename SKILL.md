@@ -32,7 +32,7 @@ advice. Markets can lose money.
 - You want the whole board — every scored name across four books, sector lanes,
   both buy-list lanes — to do your own selection → call `/api/board/agent` ($0.25).
 
-## The endpoints (15 — full catalogue at `GET https://coil.trade/api`)
+## The endpoints (18 — full catalogue at `GET https://coil.trade/api`)
 
 | Endpoint | Price (USDC) | Returns |
 |---|---|---|
@@ -40,6 +40,7 @@ advice. Markets can lose money.
 | `GET https://coil.trade/api/board/crypto`  | 0.005 | BTC/ETH long-only trend signal: LONG or CASH per sleeve, 50-day gates + the BTC 200-day master gate (UTC daily closes). |
 | `GET https://coil.trade/api/board/indices` | 0.005 | The scored index row per book (SPY, QQQ, macro, BTC/ETH) — the cheapest top-down read. |
 | `GET https://coil.trade/api/board/name?sym=NVDA` | 0.005 | One stock's full read + its book's regime — or up to **10 names in one call** (`?sym=NVDA,AMD,MSFT`). Any of ~560 names. |
+| `GET https://coil.trade/api/board/hold?sym=NVDA` | 0.005 | Per-symbol HOLD state (up to 10 per call): trend state, hold strength, readiness, maturity-late flag, gap-risk grade + book regime; BTC-USD/ETH-USD return the crypto IN\|CASH daily-close state. Never ingests your entry or size. |
 | `GET https://coil.trade/api/board/movers`  | 0.005 | Top 10 gainers + 10 losers, fully scored. |
 | `GET https://coil.trade/api/board/sectors` | 0.01  | Every sector ETF scored + the regime's green sectors. |
 | `GET https://coil.trade/api/board/sector?name=Energy` | 0.01 | One sector's members, fully scored and ranked (`?etf=XLE` works too). |
@@ -47,9 +48,10 @@ advice. Markets can lose money.
 | `GET https://coil.trade/api/board/buylist` | 0.02  | Today's ranked candidates per book across two lanes, with entry windows and leadership flags. |
 | `GET https://coil.trade/api/board/top-volume` | 0.02 | Top-5 by 20-day dollar volume in every sector, fully scored. |
 | `GET https://coil.trade/api/crypto/gate`   | 0.001 | The cheapest check: is the BTC 200-day master gate open? LONG/CASH per sleeve + verdict. |
+| `GET https://coil.trade/api/crypto/day`    | 0.005 | 24/7 crypto day-state board: ~29 RH-tradable coins — trend distances, tape lights, ATR%, RS vs BTC, room, volume z, UP/CHOP/DOWN state + ranks, plus the daily gate and breadth (~15-min refresh around the clock; a state map, not a ranking). |
 | `GET https://coil.trade/api/tradfi-risk`   | 0.003 | TradFi risk-on/off for crypto agents: S&P + Nasdaq regime, sector breadth, ladder + the BTC/ETH gate. |
 | `GET https://coil.trade/api/board/brief`   | 0.02  | The morning brief: regime per book + top-5 picks + biggest movers + crypto gate, in one call. |
-| `GET https://coil.trade/api/board/day`   | 0.02  | day-trade state map: intraday lights grid, GO, FUEL vs anchor ETF, entry-window state, ROOM per name (~70 names, ~5-min refresh; a state map, not a ranking) |
+| `GET https://coil.trade/api/board/day`   | 0.01  | day-trade state map: intraday lights grid, GO, FUEL vs anchor ETF, entry-window state, ROOM per name (~70 names, ~5-min refresh; a state map, not a ranking) |
 | `GET https://coil.trade/api/board/asof?date=YYYY-MM-DD` | 0.02 | Point-in-time archived scores, verbatim from the append-only log — immutable, never revised; verifiable against the free `/api/board/proof`. |
 | `GET https://coil.trade/api/board/agent`   | 0.25  | The full board: ~560 scored names, all four books, sector boards, both buy-list lanes. |
 
@@ -84,10 +86,12 @@ client and follow this read order:
 prices and no target prices** — risk definition belongs to the operator, not the publisher.
 Full recipe: <https://coil.trade/agents/robinhood>
 
-All live slices read from the **same freshest payload** (the as-of archive serves its requested date instead), so a cheap slice is never
-staler than the full board. During US market hours the board recomputes about
-every 5 minutes; the payload carries `computed_at` and an `intraday` flag, plus a
-`freshness` block telling you when it is worth paying again.
+All live slices read from the **same freshest payload** (two exceptions: the as-of
+archive serves its requested date, and `/api/crypto/day` is its own 24/7 artifact,
+refreshed ~15 min around the clock and self-dated via `computed_at`), so a cheap
+slice is never staler than the full board. During US market hours the board
+recomputes about every 5 minutes; the payload carries `computed_at` and an
+`intraday` flag, plus a `freshness` block telling you when it is worth paying again.
 
 ## Try it free first
 
