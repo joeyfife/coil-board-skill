@@ -60,7 +60,10 @@ buy only when it changes (`If-None-Match` gives you a 304).
 Free, before any payment: `GET /api/perf` (the engine's record vs SPY/QQQ) and
 `GET /api/board/proof` (append-only sha256 commitments with a reproducible verification
 recipe) — check the publisher before trusting it. `POST /api/key` with an email returns an
-instant free key (~25 live calls/day on the cheap slices, `X-Coil-Key` header).
+instant free key (~25 live calls/day on the cheap slices, `X-Coil-Key` header). Have a wallet
+but no email? Sign in with it instead (SIWX — the signature moves no funds): every 402
+declares `extensions["sign-in-with-x"]`; sign the message and send it back as the
+`SIGN-IN-WITH-X` header, or mint a durable key via `GET /api/auth/nonce` → `POST /api/auth/verify`.
 
 No wallet? The same board is also a **remote MCP server** — free tier, full board one market
 day delayed: `claude mcp add --transport http coil https://coil.trade/mcp`
