@@ -32,7 +32,7 @@ advice. Markets can lose money.
 - You want the whole board — every scored name across four books, sector lanes,
   both buy-list lanes — to do your own selection → call `/api/board/agent` ($0.25).
 
-## The endpoints (19 — full catalogue at `GET https://coil.trade/api`)
+## The endpoints (20 — full catalogue at `GET https://coil.trade/api`)
 
 | Endpoint | Price (USDC) | Returns |
 |---|---|---|
@@ -48,6 +48,7 @@ advice. Markets can lose money.
 | `GET https://coil.trade/api/board/buylist` | 0.02  | Today's ranked candidates per book across two lanes, with entry windows and leadership flags. |
 | `GET https://coil.trade/api/board/top-volume` | 0.02 | Top-5 by 20-day dollar volume in every sector, fully scored. |
 | `GET https://coil.trade/api/crypto/gate`   | 0.001 | The cheapest check: is the BTC 200-day master gate open? LONG/CASH per sleeve + verdict. |
+| `GET https://coil.trade/api/crypto/night`  | 0.001 | Overnight continuation read: the top-5 session-momentum coins into the 20:00 UTC signal + the BTC 200-day regime gate + the pre-registered study receipts (beat its null at every fee tier; REFUTED at Robinhood retail taker fees — the refutation ships in the read). ~15-min refresh, 24/7. |
 | `GET https://coil.trade/api/crypto/setup`  | 0.05  | Crypto SETUP scan: washed-shape hits across all 81 RH-tradable coins — GO, fuel vs BTC, grade, room, plus the setup column for the whole universe (~5-min recompute, 24/7; equity-validated shapes, forward-graded on crypto). |
 | `GET https://coil.trade/api/crypto/day`    | 0.005 | 24/7 crypto day-state board: 81 RH-tradable coins — trend distances, tape lights, ATR%, RS vs BTC, room, volume z, UP/CHOP/DOWN state + ranks, plus the daily gate and breadth (publishes ~every 5 min around the clock when the market moved; a state map, not a ranking). |
 | `GET https://coil.trade/api/tradfi-risk`   | 0.003 | TradFi risk-on/off for crypto agents: S&P + Nasdaq regime, sector breadth, ladder + the BTC/ETH gate. |
