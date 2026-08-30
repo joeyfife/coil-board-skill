@@ -197,6 +197,27 @@ whether to buy the fuller slices. The `freshness.next_refresh_at` field tells yo
 the earliest a new payload is worth paying for; polling faster returns the same
 bytes. Outside US market hours you get the morning snapshot.
 
+## When to stop
+
+Just as important as when to call, and cheaper. Stop when:
+
+- **The change-hash has not moved.** `GET /api/board/state` is free. If `state_hash`
+  is unchanged, every paid read returns the bytes you already hold. Poll the hash, not
+  the board.
+- **`freshness.next_refresh_at` is still in the future.** Calling earlier costs the same
+  and returns the same payload.
+- **The regime says stand down.** When a book is risk-off, drilling into individual
+  names cannot produce an entry the ladder permits — you are paying to confirm a no.
+  Re-check the regime, not the names.
+- **US equities are closed.** The equity board holds the last session's close until the
+  next open; only the crypto book (and its 24/7 day board) keeps moving.
+- **You already have your answer.** This is a state map, not a ranking to re-query until
+  it says something different. Re-reading an unchanged board does not make it change.
+
+A loop that respects these costs a few dollars a month. One that ignores them can spend
+that in an afternoon and learn nothing new — so the ceiling on a wallet is a real safeguard,
+not a formality.
+
 ## What this is not
 
 Not investment advice, not a managed account, not a signal service promising
