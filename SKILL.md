@@ -4,7 +4,7 @@ description: >-
   Buy Coil's scored, ranked stock board over x402 instead of building a scanner.
   Use when an agent needs a market read — is the tape risk-on or risk-off, which
   S&P 500 / Nasdaq-100 / macro names are set up to buy right now, or the full
-  ~575-name board with opportunity, entry-timing and hold-strength scores. Pays
+  ~565-name board with opportunity, entry-timing and hold-strength scores. Pays
   per read in USDC on Base (eip155:8453) via the x402 protocol — no account, no
   card, no email. Research, not investment advice.
 license: See https://coil.trade/terms
@@ -32,14 +32,15 @@ advice. Markets can lose money.
 - You want the whole board — every scored name across four books, sector lanes,
   both buy-list lanes — to do your own selection → call `/api/board/agent` ($0.25).
 
-## The endpoints (22 — full catalogue at `GET https://coil.trade/api`)
+## The endpoints (23 — full catalogue at `GET https://coil.trade/api`)
 
 | Endpoint | Price (USDC) | Returns |
 |---|---|---|
+| `GET https://coil.trade/api/live/session`  | 2.00 | A 6-hour Coil Live session token, minted on payment. Send it as `X-License-Key` to unlock every `*_live` tool, `get_engine_feed` and `get_live_rules` — the wallet-native alternative to the $29/mo subscription. Cheaper to subscribe if you run every day. |
 | `GET https://coil.trade/api/board/regime`  | 0.005 | Regime verdict per book (risk-on / be-selective / stand-down) + the index→sector→name permission ladder. |
 | `GET https://coil.trade/api/board/crypto`  | 0.005 | BTC/ETH long-only trend signal: LONG or CASH per sleeve, 50-day gates + the BTC 200-day master gate (UTC daily closes). |
 | `GET https://coil.trade/api/board/indices` | 0.005 | The scored index row per book (SPY, QQQ, macro, BTC/ETH) — the cheapest top-down read. |
-| `GET https://coil.trade/api/board/name?sym=NVDA` | 0.005 | One stock's full read + its book's regime — or up to **10 names in one call** (`?sym=NVDA,AMD,MSFT`). Any of ~575 names. |
+| `GET https://coil.trade/api/board/name?sym=NVDA` | 0.005 | One stock's full read + its book's regime — or up to **10 names in one call** (`?sym=NVDA,AMD,MSFT`). Any of ~565 names. |
 | `GET https://coil.trade/api/board/hold?sym=NVDA` | 0.005 | Per-symbol HOLD state (up to 10 per call): trend state, hold strength, readiness, maturity-late flag, gap-risk grade + book regime; BTC-USD/ETH-USD return the crypto IN\|CASH daily-close state. Never ingests your entry or size. |
 | `GET https://coil.trade/api/board/movers`  | 0.005 | Top 10 gainers + 10 losers, fully scored. |
 | `GET https://coil.trade/api/board/sectors` | 0.01  | Every sector ETF scored + the regime's green sectors. |
@@ -57,7 +58,7 @@ advice. Markets can lose money.
 | `GET https://coil.trade/api/board/rotation` | 0.005 | Sector + macro rotation: ~50 ETFs as GO / HOLDING / TURNING / OUT on their own X/SPY ratio vs its 50-day, with distance, slope and ratio RSI. A state map — confirmed rotation is LATE for a pullback buyer. |
 | `GET https://coil.trade/api/board/diff?since=<hash>` | 0.01 | What CHANGED since the state hash you stored: who entered/left the READY candidate pool, per-name trend/light/leadership/hold-band flips, regime and ladder moves. Poll `/api/board/state` free, buy this only when the hash moves — an unchanged hash is answered free and never billed. |
 | `GET https://coil.trade/api/board/asof?date=YYYY-MM-DD` | 0.02 | Point-in-time archived scores, verbatim from the append-only log — immutable, never revised; verifiable against the free `/api/board/proof`. |
-| `GET https://coil.trade/api/board/agent`   | 0.25  | The full board: ~575 scored names, all four books, sector boards, both buy-list lanes. |
+| `GET https://coil.trade/api/board/agent`   | 0.25  | The full board: ~565 scored names, all four books, sector boards, both buy-list lanes. |
 
 Free and unlimited: `GET /api/board/state` returns per-book hashes (`books.spx`, `books.qqq`) plus optional
 `?syms=NVDA,AMD` per-name hashes — poll it and
@@ -100,14 +101,16 @@ recomputes about every 5 minutes; the payload carries `computed_at` and an
 ## Try it free first
 
 Before paying, validate your parser against the free preview — identical schema
-to the paid board, previous day, top-3 names per book:
+to the paid board — live intraday timestamps, trimmed to the top-3 names per book:
 
 ```
 GET https://coil.trade/api/board/agent?preview=1
 ```
 
-There is also an always-free delayed sample at
-`GET https://coil.trade/api/board/free`.
+There is also `GET https://coil.trade/api/board/free` — today's MORNING publish, top-3 per
+book. It is not one market day delayed (that is the free MCP tier) and it is not intraday-fresh
+either, so during a session it lags the preview above by hours; `x-coil-data-age` and the
+payload's `freshness` block say by exactly how much.
 
 ## How payment works (x402)
 
